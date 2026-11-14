@@ -1,0 +1,20 @@
+{
+  "name": "tender-gateway",
+  "version": "1.0.0",
+  "description": "Tender Gateway - a free listing of open tenders with paid proposal consultancy.",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cookie-parser": "1.4.7",
+    "express": "4.21.2",
+    "nodemailer": "6.9.16",
+    "pg": "8.13.1"
+  }
+}

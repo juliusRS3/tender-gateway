@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tender Gateway</title>
+<meta name="description" content="A free list of open tenders, straight from the source, with paid help to prepare your proposal.">
+<meta name="theme-color" content="#0B0D0E">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    color-scheme:dark;
+    --bg:#0B0D0E; --surface:#14181B; --surface-2:#1B2024; --border:#252C31; --line:#36404A;
+    --text:#ECEEE9; --text-2:#9AA4A9; --text-3:#6A757C;
+    --oxide:#C4602A; --oxide-hi:#E8935B; --oxide-dim:#2B1D13; --on-oxide:#1A0E06;
+    --ok:#4E9C82; --ok-dim:#15231E; --warn:#D7A233; --warn-dim:#2A2212; --bad:#D06060; --bad-dim:#2A1616;
+    --up:#5B8FC9;--up-dim:#131D29; --mid:#4E9C82;--mid-dim:#15231E; --down:#B98BC9;--down-dim:#1F1927;
+    --r:6px;
+    --f-display:'Space Grotesk',ui-sans-serif,system-ui,sans-serif;
+    --f-body:'IBM Plex Sans',ui-sans-serif,system-ui,sans-serif;
+    --f-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{background:var(--bg);margin:0}
+  body{color:var(--text);font-family:var(--f-body);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  img{max-width:100%}
+  a{color:inherit}
+  button,input,select,textarea{font:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--oxide-hi);outline-offset:2px}
+  [hidden]{display:none!important}
+  .wrap{max-width:1000px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 96px}
+
+  .top{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:16px;border-bottom:1px solid var(--border)}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0;background:none;border:0;cursor:pointer;padding:0}
+  .brand svg{width:28px;height:28px;flex-shrink:0}
+  .brand b{font-family:var(--f-display);font-weight:700;font-size:19px;letter-spacing:-.01em}
+  .brand i{font-style:normal;font-family:var(--f-mono);font-size:11px;color:var(--text-3);letter-spacing:.04em}
+  .nav{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+  .nav a{font-size:13px;color:var(--text-2);text-decoration:none;padding:6px 10px;border-radius:var(--r);cursor:pointer}
+  .nav a:hover{color:var(--text);background:var(--surface)}
+  .nav a[aria-current="page"]{color:var(--oxide-hi);background:var(--oxide-dim)}
+  .ticker{display:flex;gap:6px 24px;flex-wrap:wrap;padding-block:11px;border-bottom:1px solid var(--border);font-family:var(--f-mono);font-size:12px;color:var(--text-3);margin-bottom:32px}
+  .ticker b{color:var(--text-2);font-weight:500}
+  .live{display:inline-flex;align-items:center;gap:7px}
+  .live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px var(--ok-dim)}
+
+  h1{font-family:var(--f-display);font-weight:700;font-size:clamp(24px,4vw,30px);letter-spacing:-.01em;margin:0 0 8px;text-wrap:balance}
+  h2{font-family:var(--f-display);font-weight:600;font-size:21px;margin:0 0 6px;text-wrap:balance}
+  h3{margin:0}
+  .lede{color:var(--text-2);font-size:15px;max-width:60ch;margin:0 0 24px}
+  .mono{font-family:var(--f-mono)}
+  .muted{color:var(--text-3)}
+  .view{animation:in .22s ease}
+  @keyframes in{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.view{animation:none}*{transition:none!important}}
+
+  .how{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--border);border-radius:8px;background:var(--surface);margin-bottom:24px}
+  .how div{display:flex;gap:10px;padding:14px 16px;min-width:0}
+  .how div+div{border-left:1px solid var(--border)}
+  .how .n{width:22px;height:22px;flex-shrink:0;border-radius:50%;border:1px solid var(--line);font-family:var(--f-mono);font-size:11px;display:grid;place-items:center;color:var(--text-2)}
+  .how div:first-child .n{background:var(--oxide);border-color:var(--oxide);color:var(--on-oxide)}
+  .how strong{display:block;font-size:13px;font-weight:600}
+  .how span{font-size:12px;color:var(--text-3)}
+
+  .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  .filters input[type=search]{flex:1 1 220px;min-width:0}
+  .ctl{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);padding:8px 10px;font-size:13px}
+  .ctl:focus{outline:none;border-color:var(--oxide)}
+  .chk{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2);padding:0 4px;cursor:pointer}
+  .chk input{accent-color:var(--oxide)}
+
+  .manifest{border-top:1px solid var(--border)}
+  .row{display:grid;grid-template-columns:118px minmax(0,1fr) auto;gap:20px;align-items:start;padding:18px 10px;border-bottom:1px solid var(--border)}
+  .row:hover{background:var(--surface)}
+  .row.closed{opacity:.55}
+  .ref{font-family:var(--f-mono);font-size:12px;color:var(--text-3);padding-top:2px;overflow-wrap:anywhere}
+  .row h3{font-size:15px;font-weight:500;margin-bottom:5px;text-wrap:pretty}
+  .meta{display:flex;gap:4px 14px;flex-wrap:wrap;font-size:12px;color:var(--text-2);margin-bottom:9px}
+  .pills{display:flex;gap:6px;flex-wrap:wrap}
+  .pill{display:inline-flex;align-items:center;gap:5px;font-family:var(--f-mono);font-size:11px;padding:2px 9px;border-radius:20px;border:1px solid;white-space:nowrap}
+  .pill .d{width:5px;height:5px;border-radius:50%;background:currentColor}
+  .p-open{color:var(--ok);background:var(--ok-dim);border-color:color-mix(in srgb,var(--ok) 35%,transparent)}
+  .p-soon{color:var(--warn);background:var(--warn-dim);border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
+  .p-closed{color:var(--text-3);background:var(--surface-2);border-color:var(--line)}
+  .p-upstream{color:var(--up);background:var(--up-dim);border-color:color-mix(in srgb,var(--up) 35%,transparent)}
+  .p-midstream{color:var(--mid);background:var(--mid-dim);border-color:color-mix(in srgb,var(--mid) 35%,transparent)}
+  .p-downstream{color:var(--down);background:var(--down-dim);border-color:color-mix(in srgb,var(--down) 35%,transparent)}
+  .p-public{color:var(--text-2);background:var(--surface-2);border-color:var(--line)}
+  .p-power{color:var(--warn);background:var(--warn-dim);border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
+  .p-pending{color:var(--warn);background:var(--warn-dim);border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
+  .p-quoted{color:var(--oxide-hi);background:var(--oxide-dim);border-color:color-mix(in srgb,var(--oxide) 45%,transparent)}
+  .p-accepted,.p-completed{color:var(--ok);background:var(--ok-dim);border-color:color-mix(in srgb,var(--ok) 35%,transparent)}
+  .p-declined{color:var(--bad);background:var(--bad-dim);border-color:color-mix(in srgb,var(--bad) 35%,transparent)}
+  .acts{display:flex;flex-direction:column;gap:8px;align-items:stretch;min-width:180px}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:13px;font-weight:500;padding:8px 14px;border-radius:var(--r);border:1px solid var(--line);background:transparent;cursor:pointer;text-decoration:none;white-space:nowrap;transition:background .15s,border-color .15s}
+  .btn:hover{background:var(--surface-2);border-color:var(--text-3)}
+  .btn .k{font-family:var(--f-mono);font-size:10px;color:var(--text-3)}
+  .btn-p{background:var(--oxide);border-color:var(--oxide);color:var(--on-oxide);font-weight:600}
+  .btn-p .k{color:color-mix(in srgb,var(--on-oxide) 60%,transparent)}
+  .btn-p:hover{background:var(--oxide-hi);border-color:var(--oxide-hi)}
+  .btn-danger{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 45%,transparent)}
+  .btn-danger:hover{background:var(--bad-dim);border-color:var(--bad)}
+  .btn-block{width:100%;padding:12px;font-size:14px}
+  .btn-sm{padding:5px 10px;font-size:12px}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .icon{width:14px;height:14px;flex-shrink:0}
+  .link{color:var(--oxide-hi);text-decoration:none;font-size:12px;display:inline-flex;align-items:center;gap:5px;cursor:pointer}
+  .link:hover{text-decoration:underline}
+  .back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text-2);background:none;border:0;padding:0;cursor:pointer;margin-bottom:20px}
+  .back:hover{color:var(--text)}
+
+  .note{margin-top:32px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);font-size:12px;color:var(--text-3);line-height:1.6}
+  .note b{color:var(--text-2);font-weight:500}
+  .empty{border:1px dashed var(--line);border-radius:8px;padding:36px 20px;text-align:center;color:var(--text-2)}
+  .empty strong{display:block;color:var(--text);font-size:15px;margin-bottom:4px}
+  .empty p{margin:0 0 16px;font-size:13px;color:var(--text-3)}
+  .banner{padding:10px 14px;border-radius:var(--r);font-size:13px;margin-bottom:16px;border:1px solid var(--line);background:var(--surface);color:var(--text-2)}
+  .banner.warn{border-color:color-mix(in srgb,var(--warn) 40%,transparent);background:var(--warn-dim);color:var(--warn)}
+  .banner.bad{border-color:color-mix(in srgb,var(--bad) 40%,transparent);background:var(--bad-dim);color:var(--bad)}
+
+  .rail{display:flex;align-items:center;margin:0 0 28px}
+  .step{display:flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:12px;color:var(--text-3);white-space:nowrap}
+  .step .n{width:22px;height:22px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:11px}
+  .step.done .n{background:var(--ok);border-color:var(--ok);color:#0B1613}
+  .step.on{color:var(--oxide-hi)}
+  .step.on .n{border-color:var(--oxide)}
+  .rail .ln{flex:1;height:1px;background:var(--border);margin:0 10px;min-width:16px}
+  .rail .ln.done{background:var(--ok)}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:clamp(16px,3vw,26px)}
+  .inset{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px}
+  .warnhead{display:flex;gap:12px;margin-bottom:16px}
+  .warnhead svg{color:var(--warn);flex-shrink:0;margin-top:2px}
+  .warnhead strong{display:block;margin-bottom:2px}
+  .warnhead p{margin:0;color:var(--text-2);font-size:13px}
+  .stack{display:flex;flex-direction:column;gap:16px}
+
+  .agree{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);cursor:pointer}
+  .agree input{width:18px;height:18px;margin-top:1px;accent-color:var(--oxide);flex-shrink:0;cursor:pointer}
+  .agree span{font-size:13px;color:var(--text-2)}
+  .agree b{color:var(--text);font-weight:500}
+
+  .terms{max-height:340px;overflow-y:auto;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;font-size:13px;color:var(--text-2);line-height:1.7}
+  .terms h4{font-size:11px;font-weight:600;color:var(--text);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 4px}
+  .terms h4:first-child{margin-top:0}
+  .terms p{margin:0 0 8px;max-width:72ch}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .field{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .field label{font-size:12px;font-weight:500;color:var(--text-2)}
+  .field input,.field select,.field textarea{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);font-size:14px;padding:10px 12px}
+  .field textarea{resize:vertical;min-height:88px}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--oxide)}
+  .field input[readonly]{color:var(--text-2)}
+  .hint{font-size:12px;color:var(--text-3)}
+  .err{font-size:12px;color:var(--bad)}
+
+  .req{background:var(--surface);border:1px solid var(--border);border-radius:8px}
+  .req>header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;padding:16px 18px}
+  .req>header>div{min-width:0}
+  .req h3{font-size:15px;font-weight:500;margin:2px 0 4px;text-wrap:pretty}
+  .req .body{border-top:1px solid var(--border);padding:16px 18px;display:flex;flex-direction:column;gap:16px}
+  .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px 20px;margin:0}
+  .kv div{min-width:0}
+  .kv dt{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em}
+  .kv dd{margin:2px 0 0;font-size:13px;overflow-wrap:anywhere}
+  .quote{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:18px}
+  .qrow{display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+  .qrow span:last-child{color:var(--text-2);text-align:right;max-width:60%;overflow-wrap:anywhere}
+  .qtotal{display:flex;justify-content:space-between;align-items:baseline;padding-top:14px}
+  .qtotal .amt{font-family:var(--f-display);font-size:26px;font-weight:700;color:var(--oxide-hi);font-variant-numeric:tabular-nums}
+  .btnrow{display:flex;gap:8px;flex-wrap:wrap}
+
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:20px;overflow-x:auto}
+  .tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 12px;font-size:13px;color:var(--text-2);cursor:pointer;white-space:nowrap}
+  .tabs button[aria-selected="true"]{color:var(--oxide-hi);border-bottom-color:var(--oxide)}
+  .tabs .c{font-family:var(--f-mono);font-size:11px;color:var(--text-3);margin-left:4px}
+  .adminhead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+  .arow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border)}
+  .arow:last-child{border-bottom:0}
+  .arow .t{font-size:14px;font-weight:500;overflow-wrap:anywhere}
+  .arow .s{font-size:12px;color:var(--text-3)}
+  .arow .top1{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:2px}
+  .list{border:1px solid var(--border);border-radius:8px;background:var(--surface)}
+  .subtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+  .subtabs button{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--text-2);cursor:pointer}
+  .subtabs button[aria-pressed="true"]{border-color:var(--oxide);color:var(--oxide-hi);background:var(--oxide-dim)}
+  .editor{margin-bottom:16px}
+  .confirmdel{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--bad)}
+
+  .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--surface-2);border:1px solid var(--line);color:var(--text);padding:10px 16px;border-radius:var(--r);font-size:13px;z-index:20;max-width:calc(100% - 32px)}
+
+  @media (max-width:720px){
+    .row{grid-template-columns:minmax(0,1fr);gap:10px}
+    .acts{flex-direction:row;flex-wrap:wrap;min-width:0}
+    .acts .btn{flex:1 1 150px}
+    .how{grid-template-columns:1fr}
+    .how div+div{border-left:0;border-top:1px solid var(--border)}
+    .grid2{grid-template-columns:1fr}
+    .step .lbl{display:none}
+    .brand i{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <button class="brand" data-go="board" aria-label="Tender Gateway home">
+      <svg viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="14" cy="14" r="12.5" stroke="var(--oxide)" stroke-width="1.4"/><path d="M14 6v8l5 5" stroke="var(--oxide)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="14" cy="14" r="2.4" fill="var(--oxide)"/></svg>
+      <b>Tender Gateway</b><i>/ straight to the source</i>
+    </button>
+    <nav class="nav" aria-label="Main">
+      <a data-go="board">Tenders</a>
+      <a data-go="requests">My requests</a>
+      <a data-go="admin" id="adminNav">Admin</a>
+    </nav>
+  </header>
+
+  <div class="ticker" id="ticker">
+    <span class="live" id="lastChecked">Loading listings…</span>
+    <span><b id="tkListings">–</b> listings</span>
+    <span><b id="tkSources">–</b> sources</span>
+    <span><b id="tkCountries">–</b> countries</span>
+    <span>Oil &amp; gas · Power · Government</span>
+  </div>
+
+  <div id="dbBanner"></div>
+
+  <!-- BOARD -->
+  <section class="view" id="v-board">
+    <h1>Open tenders, straight from the source</h1>
+    <p class="lede">Free to browse. Every entry links to the tender as advertised by the issuing company itself. Tender Gateway does not host or reproduce tender documents.</p>
+    <div class="how" aria-label="How it works">
+      <div><span class="n">1</span><p style="margin:0"><strong>Get the tender document</strong><span>Download it from the issuing company directly</span></p></div>
+      <div><span class="n">2</span><p style="margin:0"><strong>Request consultancy</strong><span>Tell us what help you need with the proposal</span></p></div>
+      <div><span class="n">3</span><p style="margin:0"><strong>Accept a fixed quote</strong><span>No fee and no work until you accept</span></p></div>
+    </div>
+    <div class="filters">
+      <input class="ctl" type="search" id="fSearch" placeholder="Search title, company or reference" aria-label="Search tenders">
+      <select class="ctl" id="fSector" aria-label="Sector"><option value="">All sectors</option><option value="upstream">Upstream</option><option value="midstream">Midstream</option><option value="downstream">Downstream</option><option value="power">Power &amp; utilities</option><option value="public">Government &amp; public sector</option></select>
+      <select class="ctl" id="fCountry" aria-label="Country"><option value="">All countries</option></select>
+      <label class="chk"><input type="checkbox" id="fClosed"> Show closed</label>
+    </div>
+    <div class="manifest" id="manifest">
+      <div class="empty" style="margin-top:16px"><strong>Loading tender listings…</strong><p>&nbsp;</p></div>
+    </div>
+    <div class="note"><b>Before you click through:</b> links point to public, official channels of the issuing company. Tender Gateway does not verify, host, or guarantee the accuracy or currency of linked tender content. Always obtain the official Invitation to Tender and all bid documents directly from the issuing company.</div>
+  </section>
+
+  <!-- FLOW -->
+  <section class="view" id="v-flow" hidden>
+    <button class="back" type="button" id="flowBack"><svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> <span id="flowBackLbl">Back to tenders</span></button>
+    <div class="rail" id="rail"></div>
+
+    <div id="fs-confirm" class="fs">
+      <h2>Before requesting consultancy</h2>
+      <p class="lede">Tender Gateway provides proposal preparation consultancy only. We do <b>not</b> provide or distribute tender documents.</p>
+      <div class="card stack">
+        <div class="warnhead">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l10 18H2L12 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 10v5M12 18v.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <div><strong>Important</strong><p>You must obtain the tender document directly from <b class="js-org"></b> before requesting consultancy. Our consultants need the actual tender requirements to prepare your proposal.</p></div>
+        </div>
+        <div class="inset">
+          <div class="mono muted js-ref" style="font-size:12px"></div>
+          <div class="js-title" style="font-weight:500;margin:2px 0 8px"></div>
+          <a class="link js-src" target="_blank" rel="noopener noreferrer">Get tender from <span class="js-org"></span> <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M6 3H3v10h10v-3M9 3h4v4M13 3L7 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+        <label class="agree"><input type="checkbox" id="cDoc"><span><b>I confirm I have already obtained the tender document</b> directly from <span class="js-org"></span> and understand that Tender Gateway does not provide, distribute, or reproduce any tender materials.</span></label>
+      </div>
+      <div style="margin-top:20px"><button class="btn btn-p btn-block" id="toTerms" disabled>Proceed to consultancy terms</button></div>
+    </div>
+
+    <div id="fs-terms" class="fs" hidden>
+      <h2>Consultancy terms and disclaimer</h2>
+      <p class="lede">Read and accept before requesting a proposal-preparation quote.</p>
+      <div class="stack">
+        <div class="terms" tabindex="0">
+          <h4>1. No affiliation</h4><p>Tender Gateway is an independent platform. It is not affiliated with, endorsed by, or acting as agent for any oil and gas company.</p>
+          <h4>2. Links, not hosted content</h4><p>Tender Gateway links to tenders advertised on the issuing companies' own official channels. It does not guarantee the accuracy, completeness or currency of any linked tender.</p>
+          <h4>3. Tender documents are your responsibility</h4><p>You obtain tender documents yourself, directly from the issuing company, at your own cost and effort. Tender Gateway never supplies them.</p>
+          <h4>4. No right to participate</h4><p>Using Tender Gateway gives no automatic right to take part in a tender. Eligibility is decided solely by the issuing company.</p>
+          <h4>5. No responsibility for bid outcomes</h4><p>Tender Gateway has no role in tender evaluation or award. Consultancy does not guarantee shortlisting or contract award.</p>
+          <h4>6. Limitation of liability</h4><p>Tender Gateway is not liable for consequential damages, loss of profit, or lost business opportunity arising from use of the platform or its consultancy services. Where liability cannot be excluded, it is capped at the fees paid in the preceding 12 months.</p>
+          <h4>7. Paid consultancy scope</h4><p>Consultancy covers proposal preparation quality, clarity and compliance only. No fee is payable and no work begins until you separately accept a specific quote.</p>
+          <h4>8. Governing law</h4><p>Disputes concerning a specific tender are governed by the law of the jurisdiction where the issuing oil and gas company operates or is incorporated.</p>
+        </div>
+        <label class="agree"><input type="checkbox" id="cTerms"><span><b>I have read and accept</b> the Terms of Use and Disclaimer above, including that Tender Gateway does not represent any oil and gas company and is not responsible for tender outcomes.</span></label>
+        <button class="btn btn-p btn-block" id="toRequest" disabled>Proceed to request a quote</button>
+      </div>
+    </div>
+
+    <div id="fs-request" class="fs" hidden>
+      <h2>Request a consultancy quote</h2>
+      <p class="lede">Tell us about the tender and what help you need. We will email your quote to the address you give below before any work begins.</p>
+      <form class="card stack" id="reqForm" novalidate>
+        <div class="field"><label for="rTender">Tender</label><input id="rTender" readonly></div>
+        <div class="grid2">
+          <div class="field"><label for="rCompany">Company name</label><input id="rCompany" required autocomplete="organization"></div>
+          <div class="field"><label for="rCountry">Country of registration</label><input id="rCountry" required autocomplete="country-name"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="rName">Contact person</label><input id="rName" required autocomplete="name"></div>
+          <div class="field"><label for="rEmail">Email</label><input id="rEmail" type="email" required autocomplete="email"></div>
+        </div>
+        <div class="field"><label for="rLevel">Level of support needed</label>
+          <select id="rLevel">
+            <option value="review">Review only: feedback on a draft you've prepared</option>
+            <option value="cowrite" selected>Co-write: we help structure and draft key sections</option>
+            <option value="full">Full preparation: end-to-end proposal support</option>
+          </select>
+        </div>
+        <div class="field"><label for="rNotes">Anything else we should know?</label><textarea id="rNotes" placeholder="Scope, technical or commercial requirements, prior experience with this buyer…"></textarea></div>
+        <div class="err" id="reqErr" hidden></div>
+        <button class="btn btn-p btn-block" type="submit" id="reqSubmit">Submit request</button>
+        <p class="hint" style="text-align:center;margin:0">Submitting sends your request only. No fee is charged at this step.</p>
+      </form>
+    </div>
+
+    <div id="fs-done" class="fs" hidden>
+      <div class="card stack" style="align-items:flex-start">
+        <div style="width:48px;height:48px;border-radius:50%;background:var(--ok-dim);display:grid;place-items:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="var(--ok)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><h2>Request sent</h2><p class="lede" style="margin:0 0 8px">We will review it and email a fixed-fee quote to <b class="js-email"></b>, usually within one business day.</p>
+        <p class="hint" style="margin:0">Your reference is <b class="mono js-reqid" style="color:var(--text)"></b>. Keep this page's link to check the status any time.</p></div>
+        <div class="btnrow"><button class="btn btn-p" data-go="requests">View my requests</button><button class="btn" data-go="board">Back to tenders</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MY REQUESTS -->
+  <section class="view" id="v-requests" hidden>
+    <h1>My requests</h1>
+    <p class="lede">Track consultancy requests from this device and review quotes. Have a reference from an email? Paste it below.</p>
+    <form class="filters" id="lookupForm" style="margin-bottom:20px">
+      <input class="ctl" id="lookupId" placeholder="Paste a request reference" aria-label="Request reference" style="flex:1 1 220px">
+      <button class="btn" type="submit">Find request</button>
+    </form>
+    <div class="stack" id="myList"></div>
+  </section>
+
+  <!-- ADMIN -->
+  <section class="view" id="v-admin" hidden>
+    <div id="adminLogin">
+      <h1>Admin</h1>
+      <p class="lede">Sign in to manage tender listings and consultancy requests.</p>
+      <form class="card stack" id="loginForm" style="max-width:380px" novalidate>
+        <div class="field"><label for="adminPw">Password</label><input id="adminPw" type="password" autocomplete="current-password"></div>
+        <div class="err" id="loginErr" hidden></div>
+        <button class="btn btn-p btn-block" type="submit">Sign in</button>
+      </form>
+    </div>
+
+    <div id="adminPanel" hidden>
+      <div class="adminhead">
+        <div><h1 style="margin:0">Admin</h1><p class="muted" style="margin:0">Manage tender listings and send consultancy quotes.</p></div>
+        <button class="btn btn-sm" id="logoutBtn">Sign out</button>
+      </div>
+      <div class="tabs" role="tablist">
+        <button role="tab" id="tabReq" aria-selected="true">Consultancy requests <span class="c" id="tcReq"></span></button>
+        <button role="tab" id="tabTen" aria-selected="false">Tenders <span class="c" id="tcTen"></span></button>
+      </div>
+      <div id="ap-req">
+        <div class="subtabs" id="reqFilter">
+          <button data-f="pending" aria-pressed="true">Needs quote</button>
+          <button data-f="quoted" aria-pressed="false">Quoted</button>
+          <button data-f="accepted" aria-pressed="false">Accepted</button>
+          <button data-f="closed" aria-pressed="false">Completed / declined</button>
+          <button data-f="all" aria-pressed="false">All</button>
+        </div>
+        <div class="stack" id="adminReqs"></div>
+      </div>
+      <div id="ap-ten" hidden>
+        <div class="btnrow" style="justify-content:space-between;margin-bottom:14px;align-items:center">
+          <span class="muted" style="font-size:12px" id="checkedNote"></span>
+          <div class="btnrow">
+            <button class="btn btn-sm" id="markChecked">Mark links checked today</button>
+            <button class="btn btn-p btn-sm" id="addTender">+ Add tender</button>
+          </div>
+        </div>
+        <form class="card stack editor" id="tEditor" hidden novalidate>
+          <h2 id="tEdTitle" style="font-size:17px">Add tender</h2>
+          <div class="grid2">
+            <div class="field"><label for="tRef">Reference</label><input id="tRef" required placeholder="QE-SC-2026-0417"></div>
+            <div class="field"><label for="tOrg">Issuing company</label><input id="tOrg" required></div>
+          </div>
+          <div class="field"><label for="tTitle">Title</label><input id="tTitle" required></div>
+          <div class="grid2">
+            <div class="field"><label for="tCountry">Country</label><input id="tCountry" required></div>
+            <div class="field"><label for="tSector">Sector</label><select id="tSector"><option value="upstream">Upstream</option><option value="midstream">Midstream</option><option value="downstream">Downstream</option><option value="power">Power &amp; utilities</option><option value="public">Government &amp; public sector</option></select></div>
+          </div>
+          <div class="grid2">
+            <div class="field"><label for="tCloses">Closing date</label><input id="tCloses" type="date"><span class="hint">Leave empty for rolling / always-open registrations.</span></div>
+            <div class="field"><label for="tSource">Official source link</label><input id="tSource" type="url" required placeholder="https://"></div>
+          </div>
+          <div class="err" id="tErr" hidden></div>
+          <div class="btnrow"><button class="btn btn-p" type="submit">Save tender</button><button class="btn" type="button" id="tCancel">Cancel</button></div>
+        </form>
+        <div class="list" id="adminTenders"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="/app.js"></script>
+</body>
+</html>
