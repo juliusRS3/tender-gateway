@@ -83,27 +83,71 @@
     return [...list].sort((a, b) => rank(a) - rank(b) || (a.closes || '9999').localeCompare(b.closes || '9999') || String(a.org).localeCompare(String(b.org)));
   }
 
+
+  // ---------- Malaysian state detection ----------
+  // Works out the state from the issuer and title. A tender may also carry an explicit `state` field.
+  const MY_STATES = [
+    ['Johor', ['johor', 'johor bahru', 'batu pahat', 'muar', 'kluang', 'segamat', 'pontian', 'kota tinggi', 'mersing', 'pasir gudang', 'iskandar puteri', 'kulai', 'tangkak']],
+    ['Kedah', ['kedah', 'alor setar', 'alor star', 'sungai petani', 'kulim', 'langkawi', 'kubang pasu', 'jitra', 'baling', 'pendang']],
+    ['Kelantan', ['kelantan', 'kota bharu', 'tumpat', 'pasir mas', 'tanah merah', 'machang', 'gua musang', 'kuala krai', 'bachok', 'jeli', 'nenggiri', 'pergau']],
+    ['Melaka', ['melaka', 'malacca', 'alor gajah', 'jasin']],
+    ['Negeri Sembilan', ['negeri sembilan', 'seremban', 'port dickson', 'rembau', 'jelebu', 'tampin', 'kuala pilah', 'tuanku muhriz', 'tuanku jaafar']],
+    ['Pahang', ['pahang', 'kuantan', 'temerloh', 'bentong', 'raub', 'cameron highlands', 'rompin', 'jerantut', 'kuala lipis']],
+    ['Penang', ['pulau pinang', 'penang', 'george town', 'georgetown', 'butterworth', 'seberang perai', 'bukit mertajam', 'gelugor', 'bayan lepas', 'prai']],
+    ['Perak', ['perak', 'ipoh', 'taiping', 'teluk intan', 'kuala kangsar', 'manjung', 'janamanjung', 'lumut', 'sitiawan', 'batu gajah', 'kampar', 'sultan azlan shah', 'slim river', 'tapah', 'temenggor', 'chenderoh']],
+    ['Perlis', ['perlis', 'kangar', 'arau', 'padang besar']],
+    ['Sabah', ['sabah', 'kota kinabalu', 'sandakan', 'tawau', 'lahad datu', 'keningau', 'kudat', 'semporna', 'beaufort']],
+    ['Sarawak', ['sarawak', 'kuching', 'miri', 'sibu', 'bintulu', 'mukah', 'kapit', 'sri aman', 'betong', 'limbang', 'lawas', 'samarahan', 'serian', 'sarikei', 'kanowit', 'baleh', 'selangau', 'bario', 'julau', 'meradong', 'simunjan', 'kabong', 'maludam', 'balingian', 'kayangeran']],
+    ['Selangor', ['selangor', 'shah alam', 'petaling jaya', 'klang', 'subang', 'kajang', 'bangi', 'sepang', 'rawang', 'serdang', 'puchong', 'kapar', 'sungai buloh', 'gombak', 'hulu langat', 'banting', 'cyberjaya', 'sabak bernam', 'connaught bridge', 'sultan salahuddin abdul aziz']],
+    ['Terengganu', ['terengganu', 'kemaman', 'dungun', 'besut', 'marang', 'setiu', 'kerteh', 'kertih', 'kenyir']],
+    ['Kuala Lumpur', ['kuala lumpur', 'wpkl']],
+    ['Putrajaya', ['putrajaya']],
+    ['Labuan', ['labuan']],
+  ].map(([name, words]) => [name, new RegExp('\\b(' + words.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/ /g, '\\s+')).join('|') + ')\\b', 'i')]);
+  const MULTI = 'Multiple states', NATIONAL = 'Nationwide / not stated';
+  function statesIn(text) { return MY_STATES.filter(([, re]) => re.test(text || '')).map(([n]) => n); }
+  function tenderRegion(t) {
+    if (t._region) return t._region;
+    let r;
+    if (t.state) r = t.state;
+    else {
+      const byOrg = statesIn(t.org);
+      if (byOrg.length === 1) r = byOrg[0];
+      else {
+        const found = statesIn(t.title);
+        if (/\bKL\b/.test(t.title || '') && !found.includes('Kuala Lumpur')) found.push('Kuala Lumpur');
+        r = found.length === 1 ? found[0] : found.length > 1 ? MULTI : NATIONAL;
+      }
+    }
+    Object.defineProperty(t, '_region', { value: r, enumerable: false });
+    return r;
+  }
+
   // ---------- board ----------
   function renderTicker() {
     const live = S.tenders.filter(t => tenderState(t) !== 'closed');
     $('#tkListings').textContent = live.length;
     $('#tkSources').textContent = new Set(S.tenders.map(t => t.org)).size;
-    $('#tkCountries').textContent = new Set(S.tenders.map(t => t.country)).size;
+    const liveStates = new Set(live.map(tenderRegion).filter(r => r !== MULTI && r !== NATIONAL));
+    $('#tkCountries').textContent = liveStates.size;
     $('#lastChecked').textContent = S.lastChecked ? `Links last checked ${fmtDT(S.lastChecked)}` : (S.tendersLoaded ? 'Link index live' : 'Loading listings…');
-    const sel = $('#fCountry'), cur = sel.value;
-    const cs = [...new Set(S.tenders.map(t => t.country))].sort();
-    sel.innerHTML = '<option value="">All countries</option>' + cs.map(c => `<option${c === cur ? ' selected' : ''}>${esc(c)}</option>`).join('');
+    const sel = $('#fState'), cur = sel.value, counts = {};
+    live.forEach(t => { const r = tenderRegion(t); counts[r] = (counts[r] || 0) + 1; });
+    const named = MY_STATES.map(([n]) => n).filter(n => counts[n]);
+    const extra = [MULTI, NATIONAL].filter(n => counts[n]);
+    sel.innerHTML = '<option value="">All states</option>' + [...named, ...extra]
+      .map(n => `<option value="${esc(n)}"${n === cur ? ' selected' : ''}>${esc(n)} (${counts[n]})</option>`).join('');
   }
   function renderBoard() {
     renderTicker();
     const el = $('#manifest');
     if (!S.tendersLoaded) return;
-    const q = $('#fSearch').value.trim().toLowerCase(), sec = $('#fSector').value, ctry = $('#fCountry').value, showClosed = $('#fClosed').checked;
+    const q = $('#fSearch').value.trim().toLowerCase(), sec = $('#fSector').value, stf = $('#fState').value, showClosed = $('#fClosed').checked;
     const list = sortTenders(S.tenders).filter(t => {
       if (!showClosed && tenderState(t) === 'closed') return false;
       if (sec && t.sector !== sec) return false;
-      if (ctry && t.country !== ctry) return false;
-      if (q && !`${t.title} ${t.org} ${t.ref} ${t.country}`.toLowerCase().includes(q)) return false;
+      if (stf && tenderRegion(t) !== stf) return false;
+      if (q && !`${t.title} ${t.org} ${t.ref} ${tenderRegion(t)}`.toLowerCase().includes(q)) return false;
       return true;
     });
     if (!S.tenders.length) { el.innerHTML = `<div class="empty" style="margin-top:16px"><strong>No tenders listed yet</strong><p>New listings will appear here as they are indexed.</p></div>`; return; }
@@ -113,7 +157,7 @@
       return `<article class="row${st === 'closed' ? ' closed' : ''}">
         <div class="ref">${esc(t.ref)}</div>
         <div style="min-width:0"><h3>${esc(t.title)}</h3>
-          <div class="meta"><span>${esc(t.org)}</span><span>${esc(t.country)}</span><span>${t.closes ? (st === 'closed' ? 'Closed ' : 'Closes ') + fmtDate(t.closes) : esc(t.closesLabel || 'Rolling registration')}</span></div>
+          <div class="meta"><span>${esc(t.org)}</span><span>${esc(tenderRegion(t))}</span><span>${t.closes ? (st === 'closed' ? 'Closed ' : 'Closes ') + fmtDate(t.closes) : esc(t.closesLabel || 'Rolling registration')}</span></div>
           <div class="pills">${statePill(st)}${sectorPill(t.sector)}</div></div>
         <div class="acts">
           <a class="btn btn-p" href="${esc(safeUrl(t.source))}" target="_blank" rel="noopener noreferrer"><span class="k">1.</span> Get tender document ${ext}</a>
@@ -121,7 +165,7 @@
         </div></article>`;
     }).join('');
   }
-  ['#fSearch', '#fSector', '#fCountry', '#fClosed'].forEach(s => $(s).addEventListener('input', renderBoard));
+  ['#fSearch', '#fSector', '#fState', '#fClosed'].forEach(s => $(s).addEventListener('input', renderBoard));
   $('#manifest').addEventListener('click', e => { const b = e.target.closest('[data-consult]'); if (b) startFlow(b.dataset.consult); });
 
   // ---------- flow ----------
