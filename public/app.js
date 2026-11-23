@@ -105,6 +105,7 @@
     ['Labuan', ['labuan']],
   ].map(([name, words]) => [name, new RegExp('\\b(' + words.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/ /g, '\\s+')).join('|') + ')\\b', 'i')]);
   const MULTI = 'Multiple states', NATIONAL = 'Nationwide / not stated';
+  const FT = ['Kuala Lumpur', 'Putrajaya', 'Labuan'];
   function statesIn(text) { return MY_STATES.filter(([, re]) => re.test(text || '')).map(([n]) => n); }
   function tenderRegion(t) {
     if (t._region) return t._region;
@@ -133,10 +134,12 @@
     $('#lastChecked').textContent = S.lastChecked ? `Links last checked ${fmtDT(S.lastChecked)}` : (S.tendersLoaded ? 'Link index live' : 'Loading listings…');
     const sel = $('#fState'), cur = sel.value, counts = {};
     live.forEach(t => { const r = tenderRegion(t); counts[r] = (counts[r] || 0) + 1; });
-    const named = MY_STATES.map(([n]) => n).filter(n => counts[n]);
-    const extra = [MULTI, NATIONAL].filter(n => counts[n]);
-    sel.innerHTML = '<option value="">All states</option>' + [...named, ...extra]
-      .map(n => `<option value="${esc(n)}"${n === cur ? ' selected' : ''}>${esc(n)} (${counts[n]})</option>`).join('');
+    const opt = n => `<option value="${esc(n)}"${n === cur ? ' selected' : ''}>${esc(n)} (${counts[n] || 0})</option>`;
+    const states = MY_STATES.map(([n]) => n).filter(n => !FT.includes(n));
+    sel.innerHTML = '<option value="">All states</option>'
+      + `<optgroup label="States">${states.map(opt).join('')}</optgroup>`
+      + `<optgroup label="Federal Territories">${FT.map(opt).join('')}</optgroup>`
+      + `<optgroup label="Other">${[MULTI, NATIONAL].map(opt).join('')}</optgroup>`;
   }
   function renderBoard() {
     renderTicker();
