@@ -41,7 +41,7 @@
     flow: { tender: null, step: 'confirm', email: '' }, adminTab: 'req', reqFilter: 'pending', openReq: null, editing: null, delConfirm: null, view: 'board' };
 
   // ---------- routing ----------
-  const VIEWS = ['board', 'requests', 'admin', 'flow', 'privacy'];
+  const VIEWS = ['board', 'requests', 'admin', 'flow', 'privacy', 'notice'];
   function go(v) { location.hash = v === 'board' ? '' : v; }
   function route() {
     const h = (location.hash || '').replace(/^#/, '');
