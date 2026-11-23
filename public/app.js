@@ -41,11 +41,12 @@
     flow: { tender: null, step: 'confirm', email: '' }, adminTab: 'req', reqFilter: 'pending', openReq: null, editing: null, delConfirm: null, view: 'board' };
 
   // ---------- routing ----------
-  const VIEWS = ['board', 'requests', 'admin', 'flow'];
+  const VIEWS = ['board', 'requests', 'admin', 'flow', 'privacy'];
   function go(v) { location.hash = v === 'board' ? '' : v; }
   function route() {
     const h = (location.hash || '').replace(/^#/, '');
     if (h.startsWith('request=')) { const id = h.slice(8); show('requests'); openRequest(id); return; }
+    if (h === 'privacy-bm') { show('privacy'); const el = document.getElementById('privacy-bm'); if (el) el.scrollIntoView(); return; }
     let v = h || 'board';
     if (!VIEWS.includes(v)) v = 'board';
     show(v);

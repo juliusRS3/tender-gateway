@@ -115,6 +115,12 @@
   .back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text-2);background:none;border:0;padding:0;cursor:pointer;margin-bottom:20px}
   .back:hover{color:var(--text)}
 
+  .site-foot{margin:48px 0 24px;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--text-3);line-height:1.7;display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:space-between}
+  .site-foot a{color:var(--text-2);text-decoration:underline;cursor:pointer}
+  .privacy{max-width:72ch;font-size:14px;color:var(--text-2);line-height:1.7}
+  .privacy h3{font-size:15px;color:var(--text);margin:24px 0 6px}
+  .privacy ul{margin:0 0 8px;padding-left:20px}
+  .privacy p{margin:0 0 8px}
   .note{margin-top:32px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);font-size:12px;color:var(--text-3);line-height:1.6}
   .note b{color:var(--text-2);font-weight:500}
   .empty{border:1px dashed var(--line);border-radius:8px;padding:36px 20px;text-align:center;color:var(--text-2)}
@@ -250,7 +256,7 @@
     <div class="manifest" id="manifest">
       <div class="empty" style="margin-top:16px"><strong>Loading tender listings…</strong><p>&nbsp;</p></div>
     </div>
-    <div class="note"><b>Before you click through:</b> links point to public, official channels of the issuing company. Tender Gateway does not verify, host, or guarantee the accuracy or currency of linked tender content. Always obtain the official Invitation to Tender and all bid documents directly from the issuing company.</div>
+    <div class="note"><b>Before you click through:</b> links point to public, official channels of the issuing company. Tender Gateway does not verify, host, or guarantee the accuracy or currency of linked tender content. Always obtain the official Invitation to Tender and all bid documents directly from the issuing company. Tender Gateway is independent and is not affiliated with, endorsed by, or acting for any organisation whose tenders are listed.</div>
   </section>
 
   <!-- FLOW -->
@@ -281,7 +287,7 @@
       <p class="lede">Read and accept before requesting a proposal-preparation quote.</p>
       <div class="stack">
         <div class="terms" tabindex="0">
-          <h4>1. No affiliation</h4><p>Tender Gateway is an independent platform. It is not affiliated with, endorsed by, or acting as agent for any oil and gas company.</p>
+          <h4>1. No affiliation</h4><p>Tender Gateway is an independent platform operated by Pacific Edge Trading Sdn Bhd. It is not affiliated with, endorsed by, or acting as agent for any organisation whose tenders are listed, including Tenaga Nasional Berhad (TNB), the Public Works Departments (JKR), the Ministry of Health Malaysia (KKM), other ministries, state agencies, statutory bodies, government-linked companies or private companies.</p>
           <h4>2. Links, not hosted content</h4><p>Tender Gateway links to tenders advertised on the issuing companies' own official channels. It does not guarantee the accuracy, completeness or currency of any linked tender.</p>
           <h4>3. Tender documents are your responsibility</h4><p>You obtain tender documents yourself, directly from the issuing company, at your own cost and effort. Tender Gateway never supplies them.</p>
           <h4>4. No right to participate</h4><p>Using Tender Gateway gives no automatic right to take part in a tender. Eligibility is decided solely by the issuing company.</p>
@@ -319,7 +325,7 @@
         <div class="field"><label for="rNotes">Anything else we should know?</label><textarea id="rNotes" placeholder="Scope, technical or commercial requirements, prior experience with this buyer…"></textarea></div>
         <div class="err" id="reqErr" hidden></div>
         <button class="btn btn-p btn-block" type="submit" id="reqSubmit">Submit request</button>
-        <p class="hint" style="text-align:center;margin:0">Submitting sends your request only. No fee is charged at this step.</p>
+        <p class="hint" style="text-align:center;margin:0">Submitting sends your request only. No fee is charged at this step. We handle your details as described in our <a class="link" href="#privacy" data-go="privacy">Privacy Notice</a>.</p>
       </form>
     </div>
 
@@ -405,10 +411,76 @@
       </div>
     </div>
   </section>
+
+  <!-- PRIVACY NOTICE -->
+  <section class="view" id="v-privacy" hidden>
+    <h1>Privacy Notice</h1>
+    <p class="lede">Last updated 23 November 2026. <a class="link" href="#privacy-bm">Baca dalam Bahasa Malaysia</a></p>
+    <div class="privacy">
+      <p>This notice explains how <b>Pacific Edge Trading Sdn Bhd</b> (Registration No. 202501031124 (162536-A)), the operator of Tender Gateway ("we", "us"), handles personal data under Malaysia's Personal Data Protection Act 2010.</p>
+      <h3>1. What we collect</h3>
+      <ul>
+        <li><b>When you request a consultancy quote:</b> company name, country of registration, contact person's name, email address, the tender you selected, the level of support you need and any notes you give us.</li>
+        <li><b>On your device:</b> the reference numbers of your requests are saved in your browser so you can find them again under "My requests". You can clear them by clearing your browser's site data.</li>
+        <li><b>Technical data:</b> our hosting provider records basic connection data such as IP addresses to run and secure the site. Fonts are loaded from Google Fonts, which receives your IP address when the page loads.</li>
+      </ul>
+      <p>Browsing the tender list does not require you to give us any personal data.</p>
+      <h3>2. Why we use it</h3>
+      <ul>
+        <li>To review your request, prepare and email a quote, and communicate with you about it.</li>
+        <li>To provide the consultancy service if you accept a quote, and to keep business and tax records.</li>
+        <li>To screen requests against our anti-bribery terms and to meet our legal obligations.</li>
+      </ul>
+      <p>We do not sell your personal data or use it for third-party advertising.</p>
+      <h3>3. Is it required?</h3>
+      <p>Company name, country, contact person and email are required to send you a quote. If you do not provide them, we cannot process your request. Other details are optional.</p>
+      <h3>4. Who we share it with</h3>
+      <p>Only with service providers who help us run Tender Gateway, such as our website hosting and email providers, and with authorities where the law requires it. We never send your details to the organisations that issue the tenders. Some of our providers store data on servers outside Malaysia; we use providers who protect it with appropriate safeguards.</p>
+      <h3>5. How long we keep it</h3>
+      <p>We keep personal data only as long as needed for the purposes above or as required by law, and then delete it.</p>
+      <h3>6. Your rights</h3>
+      <p>You may ask to access or correct your personal data, ask us to stop using it, or withdraw your consent, by emailing <a class="link" href="mailto:info@pacificedgetrading.com">info@pacificedgetrading.com</a>. We will reply within 21 days.</p>
+      <h3>7. Contact</h3>
+      <p>Pacific Edge Trading Sdn Bhd · <a class="link" href="mailto:info@pacificedgetrading.com">info@pacificedgetrading.com</a></p>
+
+      <h2 id="privacy-bm" style="margin-top:40px">Notis Privasi (Bahasa Malaysia)</h2>
+      <p>Notis ini menerangkan cara <b>Pacific Edge Trading Sdn Bhd</b> (No. Pendaftaran 202501031124 (162536-A)), pengendali Tender Gateway ("kami"), mengendalikan data peribadi di bawah Akta Perlindungan Data Peribadi 2010.</p>
+      <h3>1. Data yang kami kumpul</h3>
+      <ul>
+        <li><b>Apabila anda meminta sebut harga perundingan:</b> nama syarikat, negara pendaftaran, nama orang untuk dihubungi, alamat e-mel, tender yang dipilih, tahap sokongan yang diperlukan dan sebarang nota yang anda berikan.</li>
+        <li><b>Pada peranti anda:</b> nombor rujukan permintaan anda disimpan dalam pelayar supaya anda boleh melihatnya semula di "My requests". Anda boleh memadamnya dengan mengosongkan data laman dalam pelayar.</li>
+        <li><b>Data teknikal:</b> penyedia hos kami merekod data sambungan asas seperti alamat IP untuk mengendalikan dan melindungi laman ini. Fon dimuatkan daripada Google Fonts, yang menerima alamat IP anda semasa halaman dimuatkan.</li>
+      </ul>
+      <p>Melayari senarai tender tidak memerlukan anda memberikan sebarang data peribadi.</p>
+      <h3>2. Tujuan penggunaan</h3>
+      <ul>
+        <li>Untuk menyemak permintaan anda, menyediakan dan menghantar sebut harga melalui e-mel, serta berhubung dengan anda mengenainya.</li>
+        <li>Untuk menyediakan perkhidmatan perundingan jika anda menerima sebut harga, dan menyimpan rekod perniagaan dan cukai.</li>
+        <li>Untuk menyaring permintaan mengikut terma anti-rasuah kami dan mematuhi kewajipan undang-undang.</li>
+      </ul>
+      <p>Kami tidak menjual data peribadi anda atau menggunakannya untuk pengiklanan pihak ketiga.</p>
+      <h3>3. Adakah ia wajib?</h3>
+      <p>Nama syarikat, negara, orang untuk dihubungi dan e-mel adalah wajib untuk menghantar sebut harga. Tanpanya, kami tidak dapat memproses permintaan anda. Butiran lain adalah pilihan.</p>
+      <h3>4. Pihak yang menerima data</h3>
+      <p>Hanya penyedia perkhidmatan yang membantu kami mengendalikan Tender Gateway, seperti penyedia hos laman web dan e-mel, serta pihak berkuasa apabila dikehendaki oleh undang-undang. Kami tidak sekali-kali menghantar butiran anda kepada organisasi yang mengeluarkan tender. Sesetengah penyedia kami menyimpan data pada pelayan di luar Malaysia; kami menggunakan penyedia yang melindunginya dengan langkah keselamatan yang sewajarnya.</p>
+      <h3>5. Tempoh simpanan</h3>
+      <p>Kami menyimpan data peribadi hanya selama yang diperlukan untuk tujuan di atas atau seperti yang dikehendaki oleh undang-undang, dan kemudian memadamnya.</p>
+      <h3>6. Hak anda</h3>
+      <p>Anda boleh meminta untuk mengakses atau membetulkan data peribadi anda, meminta kami berhenti menggunakannya, atau menarik balik persetujuan anda, dengan menghantar e-mel ke <a class="link" href="mailto:info@pacificedgetrading.com">info@pacificedgetrading.com</a>. Kami akan membalas dalam tempoh 21 hari.</p>
+      <h3>7. Hubungi kami</h3>
+      <p>Pacific Edge Trading Sdn Bhd · <a class="link" href="mailto:info@pacificedgetrading.com">info@pacificedgetrading.com</a></p>
+      <p style="margin-top:24px"><button class="btn" data-go="board">Back to tenders</button></p>
+    </div>
+  </section>
+
+  <footer class="site-foot">
+    <span>Tender Gateway is operated by <b>Pacific Edge Trading Sdn Bhd</b> (Registration No. 202501031124 (162536-A)) · <a href="mailto:info@pacificedgetrading.com">info@pacificedgetrading.com</a></span>
+    <span><a data-go="privacy" href="#privacy">Privacy Notice</a> · Independent; not affiliated with any tender issuer.</span>
+  </footer>
 </div>
 
 <div class="toast" id="toast" role="status" hidden></div>
 
-<script src="/app.js?v=5"></script>
+<script src="/app.js?v=6"></script>
 </body>
 </html>
