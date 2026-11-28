@@ -108,10 +108,12 @@
   const MULTI = 'Multiple states', NATIONAL = 'Nationwide / not stated';
   const FT = ['Kuala Lumpur', 'Putrajaya', 'Labuan'];
   function statesIn(text) { return MY_STATES.filter(([, re]) => re.test(text || '')).map(([n]) => n); }
+  const isMY = t => (t.country || 'Malaysia').trim().toLowerCase() === 'malaysia';
   function tenderRegion(t) {
     if (t._region) return t._region;
     let r;
-    if (t.state) r = t.state;
+    if (!isMY(t)) r = t.country;
+    else if (t.state) r = t.state;
     else {
       const byOrg = statesIn(t.org);
       if (byOrg.length === 1) r = byOrg[0];
@@ -130,28 +132,52 @@
     const live = S.tenders.filter(t => tenderState(t) !== 'closed');
     $('#tkListings').textContent = live.length;
     $('#tkSources').textContent = new Set(S.tenders.map(t => t.org)).size;
-    const liveStates = new Set(live.map(tenderRegion).filter(r => r !== MULTI && r !== NATIONAL));
-    $('#tkCountries').textContent = liveStates.size;
+    const ccount = {};
+    live.forEach(t => { const c = (t.country || 'Malaysia').trim(); ccount[c] = (ccount[c] || 0) + 1; });
+    $('#tkCountries').textContent = Object.keys(ccount).length;
+    const liveMY = live.filter(isMY);
+    $('#tkStates').textContent = new Set(liveMY.map(tenderRegion).filter(r => r !== MULTI && r !== NATIONAL)).size;
     $('#lastChecked').textContent = S.lastChecked ? `Links last checked ${fmtDT(S.lastChecked)}` : (S.tendersLoaded ? 'Link index live' : 'Loading listings…');
+    // Country dropdown: Malaysia first, then the others A–Z
+    const csel = $('#fCountry'), ccur = csel.value;
+    const cs = Object.keys(ccount).sort((a, b) => (a === 'Malaysia' ? -1 : b === 'Malaysia' ? 1 : a.localeCompare(b)));
+    if (ccur && !cs.includes(ccur)) cs.push(ccur);
+    csel.innerHTML = '<option value="">All countries</option>' + cs.map(c => `<option value="${esc(c)}"${c === ccur ? ' selected' : ''}>${esc(c)} (${ccount[c] || 0})</option>`).join('');
+    // State dropdown: Malaysian tenders only
     const sel = $('#fState'), cur = sel.value, counts = {};
-    live.forEach(t => { const r = tenderRegion(t); counts[r] = (counts[r] || 0) + 1; });
+    liveMY.forEach(t => { const r = tenderRegion(t); counts[r] = (counts[r] || 0) + 1; });
     const opt = n => `<option value="${esc(n)}"${n === cur ? ' selected' : ''}>${esc(n)} (${counts[n] || 0})</option>`;
     const states = MY_STATES.map(([n]) => n).filter(n => !FT.includes(n));
-    sel.innerHTML = '<option value="">All states</option>'
+    sel.innerHTML = '<option value="">All Malaysian states</option>'
       + `<optgroup label="States">${states.map(opt).join('')}</optgroup>`
       + `<optgroup label="Federal Territories">${FT.map(opt).join('')}</optgroup>`
       + `<optgroup label="Other">${[MULTI, NATIONAL].map(opt).join('')}</optgroup>`;
+    // The state filter only applies when Malaysia (or all countries) is shown
+    const myOnly = !csel.value || csel.value === 'Malaysia';
+    sel.disabled = !myOnly;
+    if (!myOnly) sel.value = '';
+  }
+  function boardSort(list, how) {
+    const rank = t => ({ soon: 0, open: 1, closed: 2 }[tenderState(t)]);
+    const closeKey = t => t.closes || '';
+    const byOrg = (a, b) => String(a.org).localeCompare(String(b.org)) || String(a.title).localeCompare(String(b.title));
+    const arr = [...list];
+    if (how === 'late') return arr.sort((a, b) => (rank(a) === 2) - (rank(b) === 2) || (!closeKey(a)) - (!closeKey(b)) || closeKey(b).localeCompare(closeKey(a)) || byOrg(a, b));
+    if (how === 'org') return arr.sort(byOrg);
+    if (how === 'country') return arr.sort((a, b) => String(a.country).localeCompare(String(b.country)) || tenderRegion(a).localeCompare(tenderRegion(b)) || (a.closes || '9999').localeCompare(b.closes || '9999'));
+    return sortTenders(arr);
   }
   function renderBoard() {
     renderTicker();
     const el = $('#manifest');
     if (!S.tendersLoaded) return;
-    const q = $('#fSearch').value.trim().toLowerCase(), sec = $('#fSector').value, stf = $('#fState').value, showClosed = $('#fClosed').checked;
-    const list = sortTenders(S.tenders).filter(t => {
+    const q = $('#fSearch').value.trim().toLowerCase(), sec = $('#fSector').value, ctf = $('#fCountry').value, stf = $('#fState').disabled ? '' : $('#fState').value, showClosed = $('#fClosed').checked;
+    const list = boardSort(S.tenders, $('#fSort').value).filter(t => {
       if (!showClosed && tenderState(t) === 'closed') return false;
       if (sec && t.sector !== sec) return false;
-      if (stf && tenderRegion(t) !== stf) return false;
-      if (q && !`${t.title} ${t.org} ${t.ref} ${tenderRegion(t)}`.toLowerCase().includes(q)) return false;
+      if (ctf && (t.country || 'Malaysia').trim() !== ctf) return false;
+      if (stf && (!isMY(t) || tenderRegion(t) !== stf)) return false;
+      if (q && !`${t.title} ${t.org} ${t.ref} ${t.country || 'Malaysia'} ${tenderRegion(t)} ${isMY(t) ? '' : 'middle east'}`.toLowerCase().includes(q)) return false;
       return true;
     });
     if (!S.tenders.length) { el.innerHTML = `<div class="empty" style="margin-top:16px"><strong>No tenders listed yet</strong><p>New listings will appear here as they are indexed.</p></div>`; return; }
@@ -161,7 +187,7 @@
       return `<article class="row${st === 'closed' ? ' closed' : ''}">
         <div class="ref">${esc(t.ref)}</div>
         <div style="min-width:0"><h3>${esc(t.title)}</h3>
-          <div class="meta"><span>${esc(t.org)}</span><span>${esc(tenderRegion(t))}</span><span>${t.closes ? (st === 'closed' ? 'Closed ' : 'Closes ') + fmtDate(t.closes) : esc(t.closesLabel || 'Rolling registration')}</span></div>
+          <div class="meta"><span>${esc(t.org)}</span><span>${esc(!isMY(t) ? t.country : tenderRegion(t) === NATIONAL ? 'Malaysia (nationwide)' : tenderRegion(t) + ', Malaysia')}</span><span>${t.closes ? (st === 'closed' ? 'Closed ' : 'Closes ') + fmtDate(t.closes) : esc(t.closesLabel || 'Rolling registration')}</span></div>
           <div class="pills">${statePill(st)}${sectorPill(t.sector)}</div></div>
         <div class="acts">
           <a class="btn btn-p" href="${esc(safeUrl(t.source))}" target="_blank" rel="noopener noreferrer"><span class="k">1.</span> Get tender document ${ext}</a>
@@ -169,7 +195,7 @@
         </div></article>`;
     }).join('');
   }
-  ['#fSearch', '#fSector', '#fState', '#fClosed'].forEach(s => $(s).addEventListener('input', renderBoard));
+  ['#fSearch', '#fSector', '#fCountry', '#fState', '#fSort', '#fClosed'].forEach(s => $(s).addEventListener('input', renderBoard));
   $('#manifest').addEventListener('click', e => { const b = e.target.closest('[data-consult]'); if (b) startFlow(b.dataset.consult); });
 
   // ---------- flow ----------

@@ -1,7 +1,7 @@
 /* Tender Gateway service worker - makes the site installable and fast.
    App shell is cached; API calls and tender data always go to the network. */
-const CACHE = 'tg-v9';
-const SHELL = ['/', '/index.html', '/app.js?v=9', '/manifest.webmanifest',
+const CACHE = 'tg-v11';
+const SHELL = ['/', '/index.html', '/app.js?v=11', '/manifest.webmanifest',
   '/icons/icon.svg', '/icons/icon-192.png', '/icons/icon-512.png'];
 
 self.addEventListener('install', e => {

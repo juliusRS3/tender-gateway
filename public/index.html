@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Tender Gateway – Open Tenders in Malaysia, Free (TNB, JKR, KKM &amp; more)</title>
+<title>Tender Gateway – Free Open Tenders in Malaysia &amp; Middle East Oil and Gas</title>
 <link rel="canonical" href="https://tendergateway.app/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Tender Gateway">
-<meta property="og:title" content="Tender Gateway – Open Tenders in Malaysia">
-<meta property="og:description" content="Free list of open Malaysian tenders from TNB, JKR, KKM, state agencies and more, linked straight to the official source. No subscription fees.">
+<meta property="og:title" content="Tender Gateway – Open Tenders in Malaysia &amp; the Middle East">
+<meta property="og:description" content="Free list of open tenders from Malaysia (TNB, JKR, KKM, state agencies) and Middle East oil and gas companies, linked straight to the official source. No subscription fees.">
 <meta property="og:url" content="https://tendergateway.app/">
 <meta property="og:image" content="https://tendergateway.app/icons/icon-512.png">
 <meta name="twitter:card" content="summary">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"Tender Gateway","url":"https://tendergateway.app/","description":"Free list of open tenders in Malaysia, linked to the official issuer source."},{"@type":"Organization","name":"Pacific Edge Trading Sdn Bhd","url":"https://tendergateway.app/","email":"info@pacificedgetrading.com","identifier":"202501031124 (162536-A)","logo":"https://tendergateway.app/icons/icon-512.png"}]}</script>
-<meta name="description" content="A free list of open tenders in Malaysia, straight from the source. No subscription fees. Optional paid help to prepare your proposal.">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"Tender Gateway","url":"https://tendergateway.app/","description":"Free list of open tenders in Malaysia and Middle East oil and gas, linked to the official issuer source."},{"@type":"Organization","name":"Pacific Edge Trading Sdn Bhd","url":"https://tendergateway.app/","email":"info@pacificedgetrading.com","identifier":"202501031124 (162536-A)","logo":"https://tendergateway.app/icons/icon-512.png"}]}</script>
+<meta name="description" content="A free list of open tenders in Malaysia and Middle East oil and gas, straight from the official source. No subscription fees. Optional paid help to prepare your proposal.">
 <meta name="theme-color" content="#E4EFFB">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
@@ -241,7 +241,8 @@
     <span class="live" id="lastChecked">Loading listings…</span>
     <span><b id="tkListings">–</b> listings</span>
     <span><b id="tkSources">–</b> sources</span>
-    <span><b id="tkCountries">–</b> states</span>
+    <span><b id="tkCountries">–</b> countries</span>
+    <span><b id="tkStates">–</b> Malaysian states</span>
     <span>Oil &amp; gas · Power · Government</span>
   </div>
 
@@ -257,9 +258,11 @@
       <div><span class="n">3</span><p style="margin:0"><strong>Accept a fixed quote</strong><span>No fee and no work until you accept</span></p></div>
     </div>
     <div class="filters">
-      <input class="ctl" type="search" id="fSearch" placeholder="Search title, company or reference" aria-label="Search tenders">
+      <input class="ctl" type="search" id="fSearch" placeholder="Search title, company, reference, country or state" aria-label="Search tenders">
       <select class="ctl" id="fSector" aria-label="Sector"><option value="">All sectors</option><option value="upstream">Upstream</option><option value="midstream">Midstream</option><option value="downstream">Downstream</option><option value="power">Power &amp; utilities</option><option value="public">Government &amp; public sector</option></select>
-      <select class="ctl" id="fState" aria-label="State"><option value="">All states</option></select>
+      <select class="ctl" id="fCountry" aria-label="Country"><option value="">All countries</option></select>
+      <select class="ctl" id="fState" aria-label="Malaysian state"><option value="">All Malaysian states</option></select>
+      <select class="ctl" id="fSort" aria-label="Sort by"><option value="soon">Sort: closing soonest</option><option value="late">Sort: closing latest</option><option value="org">Sort: issuer A–Z</option><option value="country">Sort: country</option></select>
       <label class="chk"><input type="checkbox" id="fClosed"> Show closed</label>
     </div>
     <div class="manifest" id="manifest">
@@ -504,6 +507,6 @@
 
 <div class="toast" id="toast" role="status" hidden></div>
 
-<script src="/app.js?v=9"></script>
+<script src="/app.js?v=11"></script>
 </body>
 </html>
