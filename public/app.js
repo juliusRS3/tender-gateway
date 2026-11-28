@@ -179,6 +179,9 @@
       if (q && !`${t.title} ${t.org} ${t.ref} ${t.country || 'Malaysia'} ${tenderRegion(t)} ${isMY(t) ? '' : 'middle east'}`.toLowerCase().includes(q)) return false;
       return true;
     });
+    { const ctf2 = $('#fCountry').value, st2 = $('#fState').value;
+      const where = st2 && ctf2 === 'Malaysia' ? ` in ${st2}, Malaysia` : ctf2 ? ` in ${ctf2}` : ' in all countries';
+      $('#resultCount').textContent = S.tenders.length ? `Showing ${list.length} ${list.length === 1 ? 'tender' : 'tenders'}${where}` : ''; }
     if (!S.tenders.length) { el.innerHTML = `<div class="empty" style="margin-top:16px"><strong>No tenders listed yet</strong><p>New listings will appear here as they are indexed.</p></div>`; return; }
     if (!list.length) { el.innerHTML = `<div class="empty" style="margin-top:16px"><strong>No tenders match these filters</strong><p>Try clearing the search or ticking "Show closed".</p></div>`; return; }
     el.innerHTML = list.map(t => {
@@ -196,8 +199,9 @@
   }
   ['#fSearch', '#fSector', '#fSort', '#fClosed'].forEach(s => $(s).addEventListener('input', renderBoard));
   // Picking a state switches Country to Malaysia; picking any other country (or All countries) clears the state
-  $('#fState').addEventListener('change', () => { if ($('#fState').value) $('#fCountry').value = 'Malaysia'; renderBoard(); });
-  $('#fCountry').addEventListener('change', () => { if ($('#fCountry').value !== 'Malaysia') $('#fState').value = ''; renderBoard(); });
+  const onState = () => { if ($('#fState').value) $('#fCountry').value = 'Malaysia'; renderBoard(); };
+  const onCountry = () => { if ($('#fCountry').value !== 'Malaysia') $('#fState').value = ''; renderBoard(); };
+  ['input', 'change'].forEach(ev => { $('#fState').addEventListener(ev, onState); $('#fCountry').addEventListener(ev, onCountry); });
   $('#manifest').addEventListener('click', e => { const b = e.target.closest('[data-consult]'); if (b) startFlow(b.dataset.consult); });
 
   // ---------- flow ----------
