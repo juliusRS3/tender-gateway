@@ -151,14 +151,10 @@
     liveMY.forEach(t => { const r = tenderRegion(t); counts[r] = (counts[r] || 0) + 1; });
     const opt = n => `<option value="${esc(n)}"${n === cur ? ' selected' : ''}>${esc(n)} (${counts[n] || 0})</option>`;
     const states = MY_STATES.map(([n]) => n).filter(n => !FT.includes(n));
-    sel.innerHTML = '<option value="">All Malaysian states</option>'
+    sel.innerHTML = '<option value="">All states (Malaysia)</option>'
       + `<optgroup label="States">${states.map(opt).join('')}</optgroup>`
       + `<optgroup label="Federal Territories">${FT.map(opt).join('')}</optgroup>`
       + `<optgroup label="Other">${[MULTI, NATIONAL].map(opt).join('')}</optgroup>`;
-    // The state filter only applies when Malaysia (or all countries) is shown
-    const myOnly = !csel.value || csel.value === 'Malaysia';
-    sel.disabled = !myOnly;
-    if (!myOnly) sel.value = '';
   }
   function boardSort(list, how) {
     const rank = t => ({ soon: 0, open: 1, closed: 2 }[tenderState(t)]);
@@ -174,7 +170,7 @@
     renderTicker();
     const el = $('#manifest');
     if (!S.tendersLoaded) return;
-    const q = $('#fSearch').value.trim().toLowerCase(), sec = $('#fSector').value, ctf = $('#fCountry').value, stf = $('#fState').disabled ? '' : $('#fState').value, showClosed = $('#fClosed').checked;
+    const q = $('#fSearch').value.trim().toLowerCase(), sec = $('#fSector').value, ctf = $('#fCountry').value, stf = $('#fCountry').value === 'Malaysia' ? $('#fState').value : '', showClosed = $('#fClosed').checked;
     const list = boardSort(S.tenders, $('#fSort').value).filter(t => {
       if (!showClosed && tenderState(t) === 'closed') return false;
       if (sec && t.sector !== sec) return false;
@@ -198,7 +194,10 @@
         </div></article>`;
     }).join('');
   }
-  ['#fSearch', '#fSector', '#fCountry', '#fState', '#fSort', '#fClosed'].forEach(s => $(s).addEventListener('input', renderBoard));
+  ['#fSearch', '#fSector', '#fSort', '#fClosed'].forEach(s => $(s).addEventListener('input', renderBoard));
+  // Picking a state switches Country to Malaysia; picking any other country (or All countries) clears the state
+  $('#fState').addEventListener('change', () => { if ($('#fState').value) $('#fCountry').value = 'Malaysia'; renderBoard(); });
+  $('#fCountry').addEventListener('change', () => { if ($('#fCountry').value !== 'Malaysia') $('#fState').value = ''; renderBoard(); });
   $('#manifest').addEventListener('click', e => { const b = e.target.closest('[data-consult]'); if (b) startFlow(b.dataset.consult); });
 
   // ---------- flow ----------
