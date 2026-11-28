@@ -140,9 +140,12 @@
     $('#lastChecked').textContent = S.lastChecked ? `Links last checked ${fmtDT(S.lastChecked)}` : (S.tendersLoaded ? 'Link index live' : 'Loading listings…');
     // Country dropdown: Malaysia first, then the others A–Z
     const csel = $('#fCountry'), ccur = csel.value;
-    const cs = Object.keys(ccount).sort((a, b) => (a === 'Malaysia' ? -1 : b === 'Malaysia' ? 1 : a.localeCompare(b)));
-    if (ccur && !cs.includes(ccur)) cs.push(ccur);
-    csel.innerHTML = '<option value="">All countries</option>' + cs.map(c => `<option value="${esc(c)}"${c === ccur ? ' selected' : ''}>${esc(c)} (${ccount[c] || 0})</option>`).join('');
+    const ME = ['Bahrain', 'Iraq', 'Kuwait', 'Oman', 'Qatar', 'Saudi Arabia', 'United Arab Emirates'];
+    const extra = Object.keys(ccount).filter(c => c !== 'Malaysia' && !ME.includes(c)).sort();
+    const copt = c => `<option value="${esc(c)}"${c === ccur ? ' selected' : ''}>${esc(c)} (${ccount[c] || 0})</option>`;
+    csel.innerHTML = '<option value="">All countries</option>' + copt('Malaysia')
+      + `<optgroup label="Middle East (oil &amp; gas)">${ME.map(copt).join('')}</optgroup>`
+      + (extra.length ? `<optgroup label="Other">${extra.map(copt).join('')}</optgroup>` : '');
     // State dropdown: Malaysian tenders only
     const sel = $('#fState'), cur = sel.value, counts = {};
     liveMY.forEach(t => { const r = tenderRegion(t); counts[r] = (counts[r] || 0) + 1; });
